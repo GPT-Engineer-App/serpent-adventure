@@ -21,6 +21,7 @@ const getRandomPosition = () => {
 const Index = () => {
   const [snake, setSnake] = useState([{ x: 2, y: 2 }]);
   const [food, setFood] = useState(getRandomPosition());
+  const [bombs, setBombs] = useState([getRandomPosition()]);
   const [direction, setDirection] = useState(DIRECTIONS.RIGHT);
   const [isGameOver, setIsGameOver] = useState(false);
 
@@ -70,7 +71,7 @@ const Index = () => {
           newSnake.unshift(head);
         }
 
-        if (head.x < 0 || head.x >= WIDTH / CELL_SIZE || head.y < 0 || head.y >= HEIGHT / CELL_SIZE || newSnake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)) {
+        if (head.x < 0 || head.x >= WIDTH / CELL_SIZE || head.y < 0 || head.y >= HEIGHT / CELL_SIZE || newSnake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y) || bombs.some((bomb) => bomb.x === head.x && bomb.y === head.y)) {
           setIsGameOver(true);
           cancelAnimationFrame(animationFrameId);
         }
@@ -89,6 +90,7 @@ const Index = () => {
   }, [direction, food, isGameOver]);
 
   const handleRestart = () => {
+    setBombs([getRandomPosition()]);
     setSnake([{ x: 2, y: 2 }]);
     setFood(getRandomPosition());
     setDirection(DIRECTIONS.RIGHT);
@@ -101,9 +103,12 @@ const Index = () => {
         <Text fontSize="2xl">Snake Game</Text>
         <Box position="relative" width={`${WIDTH}px`} height={`${HEIGHT}px`} border="1px solid black">
           {snake.map((segment, index) => (
-            <Box key={index} position="absolute" width={`${CELL_SIZE}px`} height={`${CELL_SIZE}px`} backgroundColor="green" style={{ left: `${segment.x * CELL_SIZE}px`, top: `${segment.y * CELL_SIZE}px` }} />
+            <Box key={index} position="absolute" width={`${CELL_SIZE}px`} height={`${CELL_SIZE}px`} background="linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" border="1px solid #2a69ac" style={{ left: `${segment.x * CELL_SIZE}px`, top: `${segment.y * CELL_SIZE}px` }} />
           ))}
-          <Box position="absolute" width={`${CELL_SIZE}px`} height={`${CELL_SIZE}px`} backgroundColor="red" style={{ left: `${food.x * CELL_SIZE}px`, top: `${food.y * CELL_SIZE}px` }} />
+          <Box position="absolute" width={`${CELL_SIZE}px`} height={`${CELL_SIZE}px`} backgroundColor="yellow" borderRadius="50%" style={{ left: `${food.x * CELL_SIZE}px`, top: `${food.y * CELL_SIZE}px` }} />
+          {bombs.map((bomb, index) => (
+            <Box key={index} position="absolute" width={`${CELL_SIZE}px`} height={`${CELL_SIZE}px`} backgroundColor="black" borderRadius="50%" style={{ left: `${bomb.x * CELL_SIZE}px`, top: `${bomb.y * CELL_SIZE}px` }} />
+          ))}
         </Box>
         {isGameOver && (
           <Text fontSize="xl" color="red.500">
