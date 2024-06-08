@@ -13,8 +13,10 @@ const DIRECTIONS = {
 };
 
 const getRandomPosition = () => {
-  const x = Math.floor(Math.random() * (WIDTH / CELL_SIZE));
-  const y = Math.floor(Math.random() * (HEIGHT / CELL_SIZE));
+  let x = Math.floor(Math.random() * (WIDTH / CELL_SIZE));
+  let y = Math.floor(Math.random() * (HEIGHT / CELL_SIZE));
+  if (x >= WIDTH / CELL_SIZE) x = WIDTH / CELL_SIZE - 1;
+  if (y >= HEIGHT / CELL_SIZE) y = HEIGHT / CELL_SIZE - 1;
   return { x, y };
 };
 
