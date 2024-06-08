@@ -53,7 +53,9 @@ const Index = () => {
   useEffect(() => {
     if (isGameOver) return;
 
-    const interval = setInterval(() => {
+    let animationFrameId;
+
+    const gameLoop = () => {
       setSnake((prevSnake) => {
         const newSnake = [...prevSnake];
         const head = { ...newSnake[0] };
@@ -70,14 +72,20 @@ const Index = () => {
 
         if (head.x < 0 || head.x >= WIDTH / CELL_SIZE || head.y < 0 || head.y >= HEIGHT / CELL_SIZE || newSnake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)) {
           setIsGameOver(true);
-          clearInterval(interval);
+          cancelAnimationFrame(animationFrameId);
         }
 
         return newSnake;
       });
-    }, 200);
 
-    return () => clearInterval(interval);
+      if (!isGameOver) {
+        animationFrameId = requestAnimationFrame(gameLoop);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(gameLoop);
+
+    return () => cancelAnimationFrame(animationFrameId);
   }, [direction, food, isGameOver]);
 
   const handleRestart = () => {
